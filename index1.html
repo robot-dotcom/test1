@@ -104,6 +104,7 @@
       height: 140px;
       object-fit: cover;
       display: block;
+      border-bottom: 1px solid #eee; /* Added divider between image and title */
     }
 
     .item-title {
@@ -111,6 +112,7 @@
       text-align: center;
       font-weight: 600;
       background: white;
+      border-top: 1px solid #eee; /* Added divider between image and title */
     }
 
     .order-summary {
@@ -381,6 +383,105 @@
       <div class="item" onclick="toggleItem(this, 'Ice Cream')">
         <img src="https://i.pinimg.com/736x/22/7d/60/227d6014a6a51f446c4f5d35aa4f0b26.jpg" alt="Ice Cream">
         <div class="item-title">Ice Cream</div>
+        <div class="quantity-controls">
+          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
+          <span class="quantity-value">1</span>
+          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
+        </div>
+      </div>
+      <div class="item" onclick="toggleItem(this, 'Nasi Lemak')">
+        <img src="https://i.pinimg.com/736x/3b/62/dc/3b62dcd2cfe13f82d0cfb3b3d8c5767e.jpg" alt="Nasi Lemak">
+        <div class="item-title">Nasi Lemak</div>
+        <div class="quantity-controls">
+          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
+          <span class="quantity-value">1</span>
+          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
+        </div>
+      </div>
+      <div class="item" onclick="toggleItem(this, 'Karipap')">
+        <img src="https://i.pinimg.com/736x/5b/c9/fa/5bc9fa8f3bc13a679b1e2ee9aa948277.jpg" alt="Karipap">
+        <div class="item-title">Karipap</div>
+        <div class="quantity-controls">
+          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
+          <span class="quantity-value">1</span>
+          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
+        </div>
+      </div>
+      <div class="item" onclick="toggleItem(this, 'Roti Jantan')">
+        <img src="https://i.pinimg.com/736x/23/b1/80/23b1807abfdc446bf0254dcd29f311c9.jpg" alt="Roti Jantan">
+        <div class="item-title">Roti Jantan</div>
+        <div class="quantity-controls">
+          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
+          <span class="quantity-value">1</span>
+          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
+        </div>
+      </div>
+      <div class="item" onclick="toggleItem(this, 'Nasi Ayam Stim')">
+        <img src="https://i.pinimg.com/736x/52/ed/14/52ed14e4bf7d36ddbb8695eac1c303e8.jpg" alt="Nasi Ayam Stim">
+        <div class="item-title">Nasi Ayam Stim</div>
+        <div class="quantity-controls">
+          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
+          <span class="quantity-value">1</span>
+          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
+        </div>
+      </div>
+      <div class="item" onclick="toggleItem(this, 'Burger Sejuk')">
+        <img src="https://i.pinimg.com/736x/33/8d/b0/338db03179ddce491c7441a3a6a834f9.jpg" alt="Burger Sejuk">
+        <div class="item-title">Burger Sejuk</div>
+        <div class="quantity-controls">
+          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
+          <span class="quantity-value">1</span>
+          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
+        </div>
+      </div>
+      <div class="item" onclick="toggleItem(this, 'Kueh Teow Mie Lebih')">
+        <img src="https://i.pinimg.com/736x/0f/1f/dd/0f1fdd58c89efd55a7997113bcfbc1fd.jpg" alt="Kueh Teow Mie Lebih">
+        <div class="item-title">Kueh Teow Mie Lebih</div>
+        <div class="quantity-controls">
+          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
+          <span class="quantity-value">1</span>
+          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
+        </div>
+      </div>
+      <div class="item" onclick="toggleItem(this, 'Nasi Ayam Black Pepper')">
+        <img src="https://i.pinimg.com/736x/3f/6d/4b/3f6d4bebd470a4ffbcc6dafe73262683.jpg" alt="Nasi Ayam Black Pepper">
+        <div class="item-title">Nasi Ayam Black Pepper</div>
+        <div class="quantity-controls">
+          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
+          <span class="quantity-value">1</span>
+          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
+        </div>
+      </div>
+      <div class="item" onclick="toggleItem(this, 'Kurma Butter')">
+        <img src="https://i.pinimg.com/736x/ab/80/38/ab8038797fe891d7674339f3da04f0d9.jpg" alt="Kurma Butter">
+        <div class="item-title">Kurma Butter</div>
+        <div class="quantity-controls">
+          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
+          <span class="quantity-value">1</span>
+          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
+        </div>
+      </div>
+      <div class="item" onclick="toggleItem(this, 'Tempoyak Udang')">
+        <img src="https://i.pinimg.com/736x/09/90/54/099054be2be66c1247f44bf3d5b5589d.jpg" alt="Tempoyak Udang">
+        <div class="item-title">Tempoyak Udang</div>
+        <div class="quantity-controls">
+          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
+          <span class="quantity-value">1</span>
+          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
+        </div>
+      </div>
+      <div class="item" onclick="toggleItem(this, 'Macha Fomo')">
+        <img src="https://i.pinimg.com/736x/01/a2/28/01a22804fab6d30c497ee7bc20a9b364.jpg" alt="Macha Fomo">
+        <div class="item-title">Macha Fomo</div>
+        <div class="quantity-controls">
+          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
+          <span class="quantity-value">1</span>
+          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
+        </div>
+      </div>
+      <div class="item" onclick="toggleItem(this, 'Longan Susu')">
+        <img src="https://i.pinimg.com/736x/32/07/86/32078634c0b4fcf6f50b945720056dd4.jpg" alt="Longan Susu">
+        <div class="item-title">Longan Susu</div>
         <div class="quantity-controls">
           <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
           <span class="quantity-value">1</span>
