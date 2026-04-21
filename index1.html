@@ -7,604 +7,848 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary: #4a6bff;
-      --primary-light: #eef1ff;
-      --success: #28a745;
-      --danger: #dc3545;
-      --dark: #2c3e50;
-      --light: #f8f9fa;
-      --gray: #6c757d;
-      --border-radius: 12px;
-      --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      --transition: all 0.3s ease;
+      --primary: #5c6ef7;
+      --primary-light: #eef0ff;
+      --primary-dark: #3d50e0;
+      --success: #2eb872;
+      --danger: #e24b4a;
+      --text: #1e2535;
+      --text-muted: #6b7280;
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --border: rgba(0,0,0,0.08);
+      --border-hover: rgba(0,0,0,0.16);
+      --radius: 14px;
+      --radius-sm: 8px;
+      --transition: 0.2s ease;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text: #e8eaf2;
+        --text-muted: #9ca3af;
+        --bg: #111318;
+        --surface: #1c1f2b;
+        --border: rgba(255,255,255,0.08);
+        --border-hover: rgba(255,255,255,0.16);
+        --primary-light: #1e2346;
+      }
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      line-height: 1.6;
-      color: var(--dark);
-      background-color: #f5f7fa;
-      padding: 20px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px 16px 80px;
     }
 
-    .container {
-      max-width: 1200px;
+    .page {
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 20px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    h1 {
-      color: var(--primary);
-      margin-bottom: 10px;
-      font-size: 2.5rem;
-    }
-
-    .subtitle {
-      color: var(--gray);
-      font-size: 1.1rem;
-    }
-
-    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
+      grid-template-columns: 1fr 340px;
+      gap: 28px;
+      align-items: start;
     }
 
-    .item {
-      background: white;
-      border-radius: var(--border-radius);
-      overflow: hidden;
+    @media (max-width: 820px) {
+      .page { grid-template-columns: 1fr; }
+      .sidebar { position: static !important; }
+    }
+
+    header { grid-column: 1 / -1; text-align: center; padding: 8px 0 4px; }
+    header h1 { font-size: 1.9rem; font-weight: 700; color: var(--primary); }
+    header p { color: var(--text-muted); margin-top: 4px; font-size: 0.95rem; }
+
+    .toolbar {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 500;
       cursor: pointer;
       transition: var(--transition);
-      box-shadow: var(--box-shadow);
+    }
+
+    .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .search-wrap {
+      margin-left: auto;
       position: relative;
     }
 
+    .search-wrap i {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    .search-wrap input {
+      padding: 7px 12px 7px 30px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.85rem;
+      width: 180px;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .search-wrap input:focus { border-color: var(--primary); width: 220px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+      gap: 14px;
+    }
+
+    .item {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+      user-select: none;
+    }
+
     .item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      transform: translateY(-3px);
+      border-color: var(--border-hover);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     }
 
     .item.selected {
-      border: 3px solid var(--primary);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(92, 110, 247, 0.15);
     }
 
-    .item.selected::after {
-      content: '\f00c';
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
+    .item.hidden { display: none; }
+
+    .check-badge {
+      display: none;
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 8px;
+      right: 8px;
       background: var(--primary);
-      color: white;
-      width: 25px;
-      height: 25px;
+      color: #fff;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 11px;
+      z-index: 2;
     }
+
+    .item.selected .check-badge { display: flex; }
 
     .item img {
       width: 100%;
-      height: 140px;
+      height: 130px;
       object-fit: cover;
       display: block;
-      border-bottom: 1px solid #eee; /* Added divider between image and title */
+    }
+
+    .item-body {
+      padding: 10px 12px 44px;
     }
 
     .item-title {
-      padding: 15px;
-      text-align: center;
+      font-size: 0.88rem;
       font-weight: 600;
-      background: white;
-      border-top: 1px solid #eee; /* Added divider between image and title */
+      line-height: 1.3;
     }
 
-    .order-summary {
-      background: white;
-      border-radius: var(--border-radius);
-      padding: 25px;
-      box-shadow: var(--box-shadow);
-      margin-top: 30px;
+    .item-price {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
     }
 
-    .order-summary h2 {
-      margin-bottom: 20px;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .qty-controls {
+      display: none;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary-light);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--primary);
     }
 
-    .order-summary h2 i {
-      font-size: 1.5rem;
-    }
+    .item.selected .qty-controls { display: flex; align-items: center; }
 
-    textarea {
-      width: 100%;
-      height: 120px;
-      padding: 15px;
-      border: 1px solid #ddd;
-      border-radius: var(--border-radius);
-      resize: none;
-      font-family: inherit;
-      font-size: 1rem;
-      margin-bottom: 20px;
-      transition: var(--transition);
-    }
-
-    textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2);
-    }
-
-    .buttons {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 12px 24px;
+    .qty-btn {
+      width: 28px;
+      height: 26px;
       border: none;
-      border-radius: var(--border-radius);
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 1rem;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #3a5bef;
-      transform: translateY(-2px);
-    }
-
-    .btn-success {
-      background: var(--success);
-      color: white;
-    }
-
-    .btn-success:hover {
-      background: #218838;
-      transform: translateY(-2px);
-    }
-
-    .btn-outline {
       background: transparent;
       color: var(--primary);
-      border: 2px solid var(--primary);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--transition);
+      line-height: 1;
     }
 
-    .btn-outline:hover {
-      background: var(--primary-light);
-    }
+    .qty-btn:hover { background: var(--primary); color: #fff; }
 
-    .total-items {
-      display: inline-block;
-      background: var(--primary);
-      color: white;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
+    .qty-val {
+      min-width: 26px;
       text-align: center;
-      line-height: 24px;
-      font-size: 0.8rem;
-      margin-left: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+    }
+
+    .summary-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 20px;
+    }
+
+    .summary-card h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .badge {
+      background: var(--primary);
+      color: #fff;
+      border-radius: 20px;
+      padding: 1px 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
     }
 
     .empty-state {
       text-align: center;
-      padding: 40px 20px;
-      color: var(--gray);
+      padding: 28px 12px;
+      color: var(--text-muted);
+      font-size: 0.88rem;
     }
 
-    .empty-state i {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      color: #ddd;
+    .empty-state i { font-size: 2rem; display: block; margin-bottom: 8px; opacity: 0.3; }
+
+    .order-list { list-style: none; margin-bottom: 14px; }
+
+    .order-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
     }
 
-    /* Quantity controls styles */
-    .item-quantity {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      width: 25px;
-      height: 25px;
-      border-radius: 50%;
+    .order-list li:last-child { border-bottom: none; }
+
+    .order-list .item-name { flex: 1; }
+    .order-list .item-qty { color: var(--text-muted); white-space: nowrap; }
+
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 10px 0 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .special-notes {
+      width: 100%;
+      min-height: 70px;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.82rem;
+      resize: vertical;
+      margin-bottom: 12px;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+
+    .special-notes:focus { border-color: var(--primary); }
+    .special-notes::placeholder { color: var(--text-muted); }
+
+    .phone-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .phone-row i { color: var(--text-muted); font-size: 13px; flex-shrink: 0; }
+
+    .phone-row input {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.82rem;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+
+    .phone-row input:focus { border-color: var(--primary); }
+    .phone-row input::placeholder { color: var(--text-muted); }
+
+    .action-btns { display: flex; flex-direction: column; gap: 8px; }
+
+    .btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
-      font-weight: bold;
-    }
-    
-    .quantity-controls {
-      display: none;
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    
-    .item.selected .quantity-controls {
-      display: flex;
-    }
-    
-    .quantity-btn {
-      width: 25px;
-      height: 25px;
+      gap: 7px;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
       border: none;
-      background: var(--primary);
-      color: white;
-      font-weight: bold;
+      font-size: 0.87rem;
+      font-weight: 600;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .quantity-btn:hover {
-      background: #3a5bef;
-    }
-    
-    .quantity-value {
-      width: 30px;
-      text-align: center;
-      font-weight: bold;
+      transition: var(--transition);
+      width: 100%;
     }
 
-    @media (max-width: 768px) {
-      .grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      }
-      
-      .buttons {
-        flex-direction: column;
-      }
-      
-      .btn {
-        width: 100%;
-        justify-content: center;
-      }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .btn-wa { background: #25D366; color: #fff; }
+    .btn-wa:hover { background: #1ebe5a; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
     }
 
-    /* Animation for selected items */
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+    .btn-ghost:hover { border-color: var(--danger); color: var(--danger); }
+
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1e2535;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: transform 0.3s ease;
+      z-index: 100;
+      white-space: nowrap;
     }
 
-    .item.selected {
-      animation: bounce 0.5s ease;
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    @media (prefers-color-scheme: dark) {
+      .toast { background: #e8eaf2; color: #111318; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Food Order Selector</h1>
-      <p class="subtitle">Select your favorite items and place your order</p>
-    </header>
+<div class="page">
+  <header>
+    <h1><i class="fas fa-utensils" style="margin-right:8px;font-size:1.5rem;"></i>Food Order Selector</h1>
+    <p>Pick your items, set quantities, and send your order</p>
+  </header>
 
-    <div class="grid">
-      <div class="item" onclick="toggleItem(this, 'Burger')">
-        <img src="https://i.pinimg.com/736x/bf/40/8d/bf408de4cb3d0fb499b6b7de00202ff7.jpg" alt="Burger">
-        <div class="item-title">Burger</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Pizza')">
-        <img src="https://i.pinimg.com/736x/e4/56/8d/e4568d1db8b1b8c383f7b02750a1a802.jpg" alt="Pizza">
-        <div class="item-title">Pizza</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Sushi')">
-        <img src="https://i.pinimg.com/736x/20/e0/e2/20e0e2e52d81ef3af0fe2cfb9ffa1a8f.jpg" alt="Sushi">
-        <div class="item-title">Sushi</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Coffee')">
-        <img src="https://i.pinimg.com/736x/6f/48/dc/6f48dc7fbc889a1664aaddb4dfa9c7ed.jpg" alt="Coffee">
-        <div class="item-title">Coffee</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Cake')">
-        <img src="https://i.pinimg.com/736x/9c/aa/1b/9caa1b8a6b3e194753ba7c21bc0c0e43.jpg" alt="Cake">
-        <div class="item-title">Cake</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Salad')">
-        <img src="https://i.pinimg.com/736x/66/c0/16/66c01686169318ab58ddcae523976d4f.jpg" alt="Salad">
-        <div class="item-title">Salad</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Pasta')">
-        <img src="https://i.pinimg.com/736x/9c/b7/4e/9cb74e3341286a334862dc22d69baf7d.jpg" alt="Pasta">
-        <div class="item-title">Pasta</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Ice Cream')">
-        <img src="https://i.pinimg.com/736x/22/7d/60/227d6014a6a51f446c4f5d35aa4f0b26.jpg" alt="Ice Cream">
-        <div class="item-title">Ice Cream</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Nasi Lemak')">
-        <img src="https://i.pinimg.com/736x/3b/62/dc/3b62dcd2cfe13f82d0cfb3b3d8c5767e.jpg" alt="Nasi Lemak">
-        <div class="item-title">Nasi Lemak</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Karipap')">
-        <img src="https://i.pinimg.com/736x/5b/c9/fa/5bc9fa8f3bc13a679b1e2ee9aa948277.jpg" alt="Karipap">
-        <div class="item-title">Karipap</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Roti Jantan')">
-        <img src="https://i.pinimg.com/736x/23/b1/80/23b1807abfdc446bf0254dcd29f311c9.jpg" alt="Roti Jantan">
-        <div class="item-title">Roti Jantan</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Nasi Ayam Stim')">
-        <img src="https://i.pinimg.com/736x/52/ed/14/52ed14e4bf7d36ddbb8695eac1c303e8.jpg" alt="Nasi Ayam Stim">
-        <div class="item-title">Nasi Ayam Stim</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Burger Sejuk')">
-        <img src="https://i.pinimg.com/736x/33/8d/b0/338db03179ddce491c7441a3a6a834f9.jpg" alt="Burger Sejuk">
-        <div class="item-title">Burger Sejuk</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Kueh Teow Mie Lebih')">
-        <img src="https://i.pinimg.com/736x/0f/1f/dd/0f1fdd58c89efd55a7997113bcfbc1fd.jpg" alt="Kueh Teow Mie Lebih">
-        <div class="item-title">Kueh Teow Mie Lebih</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Nasi Ayam Black Pepper')">
-        <img src="https://i.pinimg.com/736x/3f/6d/4b/3f6d4bebd470a4ffbcc6dafe73262683.jpg" alt="Nasi Ayam Black Pepper">
-        <div class="item-title">Nasi Ayam Black Pepper</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Kurma Butter')">
-        <img src="https://i.pinimg.com/736x/ab/80/38/ab8038797fe891d7674339f3da04f0d9.jpg" alt="Kurma Butter">
-        <div class="item-title">Kurma Butter</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Tempoyak Udang')">
-        <img src="https://i.pinimg.com/736x/09/90/54/099054be2be66c1247f44bf3d5b5589d.jpg" alt="Tempoyak Udang">
-        <div class="item-title">Tempoyak Udang</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Macha Fomo')">
-        <img src="https://i.pinimg.com/736x/01/a2/28/01a22804fab6d30c497ee7bc20a9b364.jpg" alt="Macha Fomo">
-        <div class="item-title">Macha Fomo</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
-      <div class="item" onclick="toggleItem(this, 'Longan Susu')">
-        <img src="https://i.pinimg.com/736x/32/07/86/32078634c0b4fcf6f50b945720056dd4.jpg" alt="Longan Susu">
-        <div class="item-title">Longan Susu</div>
-        <div class="quantity-controls">
-          <button class="quantity-btn minus" onclick="adjustQuantity(event, this.parentElement.parentElement, -1)">-</button>
-          <span class="quantity-value">1</span>
-          <button class="quantity-btn plus" onclick="adjustQuantity(event, this.parentElement.parentElement, 1)">+</button>
-        </div>
-      </div>
+  <div class="toolbar">
+    <button class="filter-btn active" data-cat="all" onclick="filterCat(this)">All</button>
+    <button class="filter-btn" data-cat="western" onclick="filterCat(this)">Western</button>
+    <button class="filter-btn" data-cat="local" onclick="filterCat(this)">Local</button>
+    <button class="filter-btn" data-cat="dessert" onclick="filterCat(this)">Dessert &amp; Drinks</button>
+    <div class="search-wrap">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search…" oninput="filterSearch()" />
     </div>
+  </div>
 
-    <div class="order-summary">
-      <h2><i class="fas fa-receipt"></i> Your Order <span id="itemCount" class="total-items">0</span></h2>
-      
+  <main>
+    <div class="grid" id="grid">
+
+      <div class="item" data-name="Burger" data-price="8.90" data-cat="western" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/bf/40/8d/bf408de4cb3d0fb499b6b7de00202ff7.jpg" alt="Burger" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Burger</div>
+          <div class="item-price">RM 8.90</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Pizza" data-price="14.90" data-cat="western" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/e4/56/8d/e4568d1db8b1b8c383f7b02750a1a802.jpg" alt="Pizza" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Pizza</div>
+          <div class="item-price">RM 14.90</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Sushi" data-price="18.00" data-cat="western" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/20/e0/e2/20e0e2e52d81ef3af0fe2cfb9ffa1a8f.jpg" alt="Sushi" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Sushi</div>
+          <div class="item-price">RM 18.00</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Salad" data-price="9.50" data-cat="western" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/66/c0/16/66c01686169318ab58ddcae523976d4f.jpg" alt="Salad" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Salad</div>
+          <div class="item-price">RM 9.50</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Pasta" data-price="12.90" data-cat="western" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/9c/b7/4e/9cb74e3341286a334862dc22d69baf7d.jpg" alt="Pasta" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Pasta</div>
+          <div class="item-price">RM 12.90</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Nasi Lemak" data-price="6.50" data-cat="local" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/3b/62/dc/3b62dcd2cfe13f82d0cfb3b3d8c5767e.jpg" alt="Nasi Lemak" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Nasi Lemak</div>
+          <div class="item-price">RM 6.50</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Karipap" data-price="2.50" data-cat="local" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/5b/c9/fa/5bc9fa8f3bc13a679b1e2ee9aa948277.jpg" alt="Karipap" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Karipap</div>
+          <div class="item-price">RM 2.50</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Roti Jantan" data-price="5.00" data-cat="local" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/23/b1/80/23b1807abfdc446bf0254dcd29f311c9.jpg" alt="Roti Jantan" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Roti Jantan</div>
+          <div class="item-price">RM 5.00</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Nasi Ayam Stim" data-price="8.00" data-cat="local" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/52/ed/14/52ed14e4bf7d36ddbb8695eac1c303e8.jpg" alt="Nasi Ayam Stim" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Nasi Ayam Stim</div>
+          <div class="item-price">RM 8.00</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Burger Sejuk" data-price="7.50" data-cat="local" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/33/8d/b0/338db03179ddce491c7441a3a6a834f9.jpg" alt="Burger Sejuk" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Burger Sejuk</div>
+          <div class="item-price">RM 7.50</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Kueh Teow Mie Lebih" data-price="7.00" data-cat="local" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/0f/1f/dd/0f1fdd58c89efd55a7997113bcfbc1fd.jpg" alt="Kueh Teow Mie Lebih" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Kueh Teow Mie Lebih</div>
+          <div class="item-price">RM 7.00</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Nasi Ayam Black Pepper" data-price="9.00" data-cat="local" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/3f/6d/4b/3f6d4bebd470a4ffbcc6dafe73262683.jpg" alt="Nasi Ayam Black Pepper" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Nasi Ayam Black Pepper</div>
+          <div class="item-price">RM 9.00</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Kurma Butter" data-price="10.00" data-cat="local" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/ab/80/38/ab8038797fe891d7674339f3da04f0d9.jpg" alt="Kurma Butter" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Kurma Butter</div>
+          <div class="item-price">RM 10.00</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Tempoyak Udang" data-price="11.00" data-cat="local" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/09/90/54/099054be2be66c1247f44bf3d5b5589d.jpg" alt="Tempoyak Udang" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Tempoyak Udang</div>
+          <div class="item-price">RM 11.00</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Coffee" data-price="5.50" data-cat="dessert" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/6f/48/dc/6f48dc7fbc889a1664aaddb4dfa9c7ed.jpg" alt="Coffee" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Coffee</div>
+          <div class="item-price">RM 5.50</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Cake" data-price="7.00" data-cat="dessert" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/9c/aa/1b/9caa1b8a6b3e194753ba7c21bc0c0e43.jpg" alt="Cake" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Cake</div>
+          <div class="item-price">RM 7.00</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Ice Cream" data-price="5.00" data-cat="dessert" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/22/7d/60/227d6014a6a51f446c4f5d35aa4f0b26.jpg" alt="Ice Cream" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Ice Cream</div>
+          <div class="item-price">RM 5.00</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Macha Fomo" data-price="8.50" data-cat="dessert" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/01/a2/28/01a22804fab6d30c497ee7bc20a9b364.jpg" alt="Macha Fomo" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Macha Fomo</div>
+          <div class="item-price">RM 8.50</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+      <div class="item" data-name="Longan Susu" data-price="7.00" data-cat="dessert" onclick="toggleItem(event, this)">
+        <div class="check-badge"><i class="fas fa-check"></i></div>
+        <img src="https://i.pinimg.com/736x/32/07/86/32078634c0b4fcf6f50b945720056dd4.jpg" alt="Longan Susu" loading="lazy">
+        <div class="item-body">
+          <div class="item-title">Longan Susu</div>
+          <div class="item-price">RM 7.00</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
+          <span class="qty-val">1</span>
+          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <aside class="sidebar">
+    <div class="summary-card">
+      <h2>
+        <i class="fas fa-receipt" style="color: var(--primary);"></i>
+        Your Order
+        <span class="badge" id="badgeCount">0</span>
+      </h2>
+
       <div id="emptyState" class="empty-state">
         <i class="fas fa-shopping-basket"></i>
-        <h3>Your basket is empty</h3>
-        <p>Select items from above to place your order</p>
+        <p>Your basket is empty.<br>Select items above.</p>
       </div>
-      
-      <div id="orderContent" style="display: none;">
-        <textarea id="orderMessage" readonly></textarea>
-        <div class="buttons">
-          <button class="btn btn-primary" onclick="copyMessage()">
+
+      <div id="orderContent" style="display:none;">
+        <ul class="order-list" id="orderList"></ul>
+        <div class="order-total">
+          <span>Total</span>
+          <span id="orderTotal">RM 0.00</span>
+        </div>
+
+        <label style="font-size:0.78rem;color:var(--text-muted);display:block;margin-bottom:4px;">Special notes (optional)</label>
+        <textarea class="special-notes" id="notesInput" placeholder="E.g. no onions, extra spicy…"></textarea>
+
+        <div class="phone-row">
+          <i class="fab fa-whatsapp"></i>
+          <input type="tel" id="phoneInput" placeholder="WhatsApp number (e.g. 601112345678)" />
+        </div>
+
+        <div class="action-btns">
+          <button class="btn btn-primary" onclick="copyOrder()">
             <i class="far fa-copy"></i> Copy Order
           </button>
-          <button class="btn btn-success" onclick="sendWhatsApp()">
+          <button class="btn btn-wa" onclick="sendWhatsApp()">
             <i class="fab fa-whatsapp"></i> Send via WhatsApp
           </button>
-          <button class="btn btn-outline" onclick="clearOrder()">
+          <button class="btn btn-ghost" onclick="clearOrder()">
             <i class="fas fa-trash-alt"></i> Clear Order
           </button>
         </div>
       </div>
     </div>
-  </div>
+  </aside>
+</div>
 
-  <script>
-    const selectedItems = new Map();
-    const orderContent = document.getElementById('orderContent');
-    const emptyState = document.getElementById('emptyState');
-    const itemCount = document.getElementById('itemCount');
+<div class="toast" id="toast"></div>
 
-    function toggleItem(element, itemName) {
-      element.classList.toggle('selected');
-      
-      if (selectedItems.has(itemName)) {
-        selectedItems.delete(itemName);
-        element.querySelector('.quantity-value').textContent = '1';
-      } else {
-        selectedItems.set(itemName, 1);
-      }
-      
-      updateOrderUI();
-      event.stopPropagation(); // Prevent event bubbling
+<script>
+  const orders = new Map(); // name -> { qty, price }
+
+  function toggleItem(e, el) {
+    if (e.target.closest('.qty-controls')) return;
+    const name = el.dataset.name;
+    const price = parseFloat(el.dataset.price);
+
+    if (orders.has(name)) {
+      orders.delete(name);
+      el.classList.remove('selected');
+      el.querySelector('.qty-val').textContent = '1';
+    } else {
+      orders.set(name, { qty: 1, price });
+      el.classList.add('selected');
     }
-    
-    function adjustQuantity(event, element, change) {
-      event.stopPropagation(); // Prevent triggering the parent's click event
-      const itemName = element.querySelector('.item-title').textContent;
-      const quantityElement = element.querySelector('.quantity-value');
-      let currentQuantity = parseInt(quantityElement.textContent);
-      
-      currentQuantity += change;
-      
-      // Ensure quantity doesn't go below 1
-      if (currentQuantity < 1) currentQuantity = 1;
-      
-      quantityElement.textContent = currentQuantity;
-      selectedItems.set(itemName, currentQuantity);
-      updateOrderUI();
-    }
+    updateUI();
+  }
 
-    function updateOrderUI() {
-      const count = Array.from(selectedItems.values()).reduce((a, b) => a + b, 0);
-      itemCount.textContent = count;
-      
-      if (count > 0) {
-        emptyState.style.display = 'none';
-        orderContent.style.display = 'block';
-        
-        const itemsList = Array.from(selectedItems.entries())
-          .map(([item, quantity]) => `• ${item} (x${quantity})`)
-          .join('\n');
-          
-        document.getElementById('orderMessage').value = 
-          `🍽️ My Food Order 🍽️\n\n${itemsList}\n\nThank you!`;
-      } else {
-        emptyState.style.display = 'block';
-        orderContent.style.display = 'none';
-      }
+  function adjustQty(e, btn, delta) {
+    e.stopPropagation();
+    const el = btn.closest('.item');
+    const name = el.dataset.name;
+    if (!orders.has(name)) return;
+    const entry = orders.get(name);
+    entry.qty = Math.max(1, entry.qty + delta);
+    el.querySelector('.qty-val').textContent = entry.qty;
+    updateUI();
+  }
+
+  function updateUI() {
+    const totalQty = Array.from(orders.values()).reduce((s, v) => s + v.qty, 0);
+    const totalPrice = Array.from(orders.values()).reduce((s, v) => s + v.qty * v.price, 0);
+
+    document.getElementById('badgeCount').textContent = totalQty;
+
+    if (totalQty === 0) {
+      document.getElementById('emptyState').style.display = '';
+      document.getElementById('orderContent').style.display = 'none';
+      return;
     }
 
-    function copyMessage() {
-      const msgBox = document.getElementById('orderMessage');
-      msgBox.select();
-      document.execCommand('copy');
-      
-      // Show feedback
-      const originalText = msgBox.value;
-      msgBox.value = "✅ Order copied to clipboard!\n\n" + originalText;
-      setTimeout(() => {
-        msgBox.value = originalText;
-      }, 2000);
-    }
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('orderContent').style.display = '';
 
-    function sendWhatsApp() {
-      const msg = document.getElementById('orderMessage').value;
-      if (!msg) return;
-      
-      const phoneNumber = ""; // Add your business number here if needed
-      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`;
-      window.open(url, "_blank");
-    }
+    const list = document.getElementById('orderList');
+    list.innerHTML = Array.from(orders.entries()).map(([name, { qty, price }]) => `
+      <li>
+        <span class="item-name">${name}</span>
+        <span class="item-qty">x${qty}</span>
+        <span style="color:var(--text-muted);font-size:0.8rem;">RM ${(qty * price).toFixed(2)}</span>
+      </li>
+    `).join('');
 
-    function clearOrder() {
-      selectedItems.clear();
-      document.querySelectorAll('.item').forEach(item => {
-        item.classList.remove('selected');
-        item.querySelector('.quantity-value').textContent = '1';
-      });
-      updateOrderUI();
-    }
+    document.getElementById('orderTotal').textContent = `RM ${totalPrice.toFixed(2)}`;
+  }
 
-    // Initialize
-    updateOrderUI();
-  </script>
+  function buildMessage() {
+    const lines = Array.from(orders.entries())
+      .map(([name, { qty, price }]) => `  • ${name} x${qty} — RM ${(qty * price).toFixed(2)}`);
+    const total = Array.from(orders.values()).reduce((s, v) => s + v.qty * v.price, 0);
+    const notes = document.getElementById('notesInput').value.trim();
+    const date = new Date().toLocaleString('en-MY', { dateStyle: 'medium', timeStyle: 'short' });
+
+    let msg = `🍽️ *Food Order*\n📅 ${date}\n\n`;
+    msg += lines.join('\n');
+    msg += `\n\n💰 *Total: RM ${total.toFixed(2)}*`;
+    if (notes) msg += `\n\n📝 Notes: ${notes}`;
+    msg += '\n\nThank you! 🙏';
+    return msg;
+  }
+
+  function copyOrder() {
+    const msg = buildMessage();
+    navigator.clipboard.writeText(msg).then(() => showToast('Order copied to clipboard'));
+  }
+
+  function sendWhatsApp() {
+    const msg = buildMessage();
+    let phone = document.getElementById('phoneInput').value.trim().replace(/\D/g, '');
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+  }
+
+  function clearOrder() {
+    orders.clear();
+    document.querySelectorAll('.item.selected').forEach(el => {
+      el.classList.remove('selected');
+      el.querySelector('.qty-val').textContent = '1';
+    });
+    document.getElementById('notesInput').value = '';
+    updateUI();
+    showToast('Order cleared');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  let activeCat = 'all';
+
+  function filterCat(btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCat = btn.dataset.cat;
+    applyFilters();
+  }
+
+  function filterSearch() { applyFilters(); }
+
+  function applyFilters() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.item').forEach(el => {
+      const catMatch = activeCat === 'all' || el.dataset.cat === activeCat;
+      const nameMatch = el.dataset.name.toLowerCase().includes(query);
+      el.classList.toggle('hidden', !(catMatch && nameMatch));
+    });
+  }
+
+  updateUI();
+</script>
 </body>
 </html>
