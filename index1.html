@@ -20,380 +20,267 @@
       --border-hover: rgba(0,0,0,0.16);
       --radius: 14px;
       --radius-sm: 8px;
-      --transition: 0.2s ease;
     }
-
     @media (prefers-color-scheme: dark) {
       :root {
-        --text: #e8eaf2;
-        --text-muted: #9ca3af;
-        --bg: #111318;
-        --surface: #1c1f2b;
+        --text: #e8eaf2; --text-muted: #9ca3af;
+        --bg: #111318; --surface: #1c1f2b;
         --border: rgba(255,255,255,0.08);
         --border-hover: rgba(255,255,255,0.16);
         --primary-light: #1e2346;
       }
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @keyframes fadeSlideUp   { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes popIn         { 0%{transform:scale(0.6);opacity:0} 70%{transform:scale(1.15);opacity:1} 100%{transform:scale(1)} }
+    @keyframes ripple        { to{transform:scale(4);opacity:0} }
+    @keyframes badgeBounce   { 0%,100%{transform:scale(1)} 40%{transform:scale(1.45)} 60%{transform:scale(0.9)} }
+    @keyframes shimmer       { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+    @keyframes floatParticle { 0%{transform:translateY(0) scale(1);opacity:1} 100%{transform:translateY(-80px) scale(0.3);opacity:0} }
+    @keyframes checkDraw     { from{stroke-dashoffset:30} to{stroke-dashoffset:0} }
+    @keyframes totalPop      { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12);color:var(--primary)} }
+    @keyframes slideInRight  { from{opacity:0;transform:translateX(18px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes headerIn      { from{opacity:0;transform:translateY(-30px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes filterPop     { 0%{transform:scale(1)} 40%{transform:scale(0.9)} 80%{transform:scale(1.08)} 100%{transform:scale(1)} }
+    @keyframes shake         { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
+    @keyframes toastIn       { from{transform:translateX(-50%) translateY(60px) scale(0.8);opacity:0} to{transform:translateX(-50%) translateY(0) scale(1);opacity:1} }
+    @keyframes toastOut      { from{transform:translateX(-50%) translateY(0) scale(1);opacity:1} to{transform:translateX(-50%) translateY(60px) scale(0.8);opacity:0} }
+    @keyframes overlayFade   { from{opacity:0} to{opacity:1} }
+    @keyframes sidebarSlide  { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
 
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      padding: 24px 16px 80px;
+      font-family:'Segoe UI',system-ui,sans-serif;
+      background:var(--bg); color:var(--text);
+      line-height:1.5; padding:24px 16px 80px;
+      overflow-x:hidden;
     }
 
     .page {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 28px;
-      align-items: start;
+      max-width:1100px; margin:0 auto;
+      display:grid; grid-template-columns:1fr 340px;
+      gap:28px; align-items:start;
+    }
+    @media (max-width:820px) {
+      .page { grid-template-columns:1fr; }
+      .sidebar { position:static !important; }
     }
 
-    @media (max-width: 820px) {
-      .page { grid-template-columns: 1fr; }
-      .sidebar { position: static !important; }
+    /* progress bar */
+    .progress-bar {
+      position:fixed; top:0; left:0; height:3px;
+      background:linear-gradient(90deg,var(--primary),#a78bfa);
+      width:0%; z-index:100;
+      transition:width 0.4s cubic-bezier(.22,1,.36,1);
+      border-radius:0 2px 2px 0;
     }
 
-    header { grid-column: 1 / -1; text-align: center; padding: 8px 0 4px; }
-    header h1 { font-size: 1.9rem; font-weight: 700; color: var(--primary); }
-    header p { color: var(--text-muted); margin-top: 4px; font-size: 0.95rem; }
+    /* header */
+    header {
+      grid-column:1/-1; text-align:center; padding:8px 0 4px;
+      animation:headerIn 0.7s cubic-bezier(.22,1,.36,1) both;
+    }
+    header h1 {
+      font-size:2rem; font-weight:800;
+      background:linear-gradient(135deg,var(--primary),#a78bfa);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    header p { color:var(--text-muted); margin-top:5px; font-size:.95rem; animation:fadeSlideUp 0.7s 0.2s both; }
 
+    /* toolbar */
     .toolbar {
-      grid-column: 1 / -1;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
+      grid-column:1/-1; display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+      animation:fadeSlideUp 0.5s 0.3s both;
     }
-
     .filter-btn {
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text-muted);
-      font-size: 0.82rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
+      padding:6px 16px; border-radius:20px; border:1px solid var(--border);
+      background:var(--surface); color:var(--text-muted);
+      font-size:.82rem; font-weight:500; cursor:pointer;
+      transition:color .2s,border-color .2s,background .2s,transform .15s;
     }
-
-    .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
-    .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-
-    .search-wrap {
-      margin-left: auto;
-      position: relative;
-    }
-
+    .filter-btn:hover { border-color:var(--primary); color:var(--primary); transform:translateY(-1px); }
+    .filter-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); animation:filterPop .35s ease; }
+    .search-wrap { margin-left:auto; position:relative; }
     .search-wrap i {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-      font-size: 13px;
-      pointer-events: none;
+      position:absolute; left:10px; top:50%; transform:translateY(-50%);
+      color:var(--text-muted); font-size:13px; pointer-events:none; transition:color .2s;
     }
-
     .search-wrap input {
-      padding: 7px 12px 7px 30px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      font-size: 0.85rem;
-      width: 180px;
-      outline: none;
-      transition: var(--transition);
+      padding:7px 12px 7px 30px; border-radius:20px; border:1px solid var(--border);
+      background:var(--surface); color:var(--text); font-size:.85rem; width:180px; outline:none;
+      transition:border-color .2s,width .3s cubic-bezier(.22,1,.36,1);
     }
+    .search-wrap input:focus { border-color:var(--primary); width:220px; }
+    .search-wrap:focus-within i { color:var(--primary); }
 
-    .search-wrap input:focus { border-color: var(--primary); width: 220px; }
+    /* grid */
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:14px; }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-      gap: 14px;
-    }
-
+    /* item card */
     .item {
-      background: var(--surface);
-      border-radius: var(--radius);
-      border: 1.5px solid var(--border);
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
-      position: relative;
-      user-select: none;
+      background:var(--surface); border-radius:var(--radius); border:1.5px solid var(--border);
+      overflow:hidden; cursor:pointer; position:relative; user-select:none;
+      transition:border-color .25s,box-shadow .25s,transform .25s;
     }
+    .item .img-wrap { position:relative; overflow:hidden; height:130px; }
+    .item img { width:100%; height:130px; object-fit:cover; display:block; transition:transform .4s cubic-bezier(.22,1,.36,1); }
+    .item:hover img { transform:scale(1.08); }
+    .item.selected img { transform:scale(1.04); }
 
-    .item:hover {
-      transform: translateY(-3px);
-      border-color: var(--border-hover);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    /* shimmer skeleton */
+    .item .img-wrap::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(90deg,var(--bg) 25%,var(--border-hover) 50%,var(--bg) 75%);
+      background-size:200% 100%; animation:shimmer 1.4s infinite;
+      z-index:1; transition:opacity .3s;
     }
+    .item .img-wrap.loaded::before { opacity:0; pointer-events:none; }
 
-    .item.selected {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(92, 110, 247, 0.15);
+    /* selection overlay */
+    .item .select-overlay {
+      position:absolute; inset:0; background:rgba(92,110,247,.18);
+      opacity:0; transition:opacity .25s; pointer-events:none; z-index:2;
     }
+    .item.selected .select-overlay { opacity:1; animation:overlayFade .25s ease; }
 
-    .item.hidden { display: none; }
-
+    /* check badge */
     .check-badge {
-      display: none;
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: var(--primary);
-      color: #fff;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      z-index: 2;
+      position:absolute; top:8px; right:8px;
+      background:var(--primary); color:#fff; width:24px; height:24px;
+      border-radius:50%; display:flex; align-items:center; justify-content:center;
+      z-index:3; opacity:0; transform:scale(0); transition:none;
+    }
+    .check-badge svg { width:12px; height:12px; stroke:#fff; stroke-width:2.5; fill:none; stroke-dasharray:30; stroke-dashoffset:30; }
+    .item.selected .check-badge { opacity:1; animation:popIn .4s cubic-bezier(.22,1,.36,1) forwards; }
+    .item.selected .check-badge svg { animation:checkDraw .35s .15s ease forwards; }
+
+    .item-body { padding:10px 12px 44px; }
+    .item-title { font-size:.88rem; font-weight:600; line-height:1.3; }
+    .item-price { font-size:.78rem; color:var(--text-muted); margin-top:2px; transition:color .2s; }
+    .item.selected .item-price { color:var(--primary); }
+    .item:hover { border-color:var(--border-hover); box-shadow:0 10px 28px rgba(0,0,0,.1); }
+    .item:not(.selecting):not(.deselecting):hover { transform:translateY(-4px) scale(1.012); }
+    .item.selected { border-color:var(--primary); box-shadow:0 0 0 3px rgba(92,110,247,.18),0 8px 24px rgba(92,110,247,.15); }
+    .item.selecting { animation:popIn .4s cubic-bezier(.22,1,.36,1); }
+    .item.deselecting { animation:shake .35s ease; }
+    .item.hidden { opacity:0; pointer-events:none; transform:scale(.88); transition:opacity .25s,transform .25s; }
+
+    /* ripple */
+    .item .ripple-container { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1; }
+    .ripple-circle {
+      position:absolute; border-radius:50%; background:rgba(92,110,247,.25);
+      width:40px; height:40px; margin-left:-20px; margin-top:-20px;
+      animation:ripple .55s ease-out forwards; pointer-events:none;
     }
 
-    .item.selected .check-badge { display: flex; }
-
-    .item img {
-      width: 100%;
-      height: 130px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .item-body {
-      padding: 10px 12px 44px;
-    }
-
-    .item-title {
-      font-size: 0.88rem;
-      font-weight: 600;
-      line-height: 1.3;
-    }
-
-    .item-price {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
+    /* qty controls */
     .qty-controls {
-      display: none;
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--primary-light);
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid var(--primary);
+      position:absolute; bottom:10px; left:50%;
+      transform:translateX(-50%) scaleX(0); transform-origin:center;
+      background:var(--primary-light); border-radius:20px; overflow:hidden;
+      border:1px solid var(--primary); display:flex; align-items:center;
+      opacity:0; transition:transform .3s cubic-bezier(.22,1,.36,1),opacity .25s;
     }
-
-    .item.selected .qty-controls { display: flex; align-items: center; }
-
+    .item.selected .qty-controls { transform:translateX(-50%) scaleX(1); opacity:1; }
     .qty-btn {
-      width: 28px;
-      height: 26px;
-      border: none;
-      background: transparent;
-      color: var(--primary);
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background var(--transition);
-      line-height: 1;
+      width:28px; height:26px; border:none; background:transparent; color:var(--primary);
+      font-size:16px; font-weight:700; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition:background .15s,transform .1s; line-height:1;
+    }
+    .qty-btn:hover { background:var(--primary); color:#fff; }
+    .qty-btn:active { transform:scale(.85); }
+    .qty-val { min-width:26px; text-align:center; font-size:.82rem; font-weight:700; color:var(--primary); }
+    .qty-val.bump { animation:badgeBounce .3s ease; }
+
+    /* floating particles */
+    .particle {
+      position:fixed; width:8px; height:8px; border-radius:50%;
+      pointer-events:none; z-index:999; animation:floatParticle .7s ease-out forwards;
     }
 
-    .qty-btn:hover { background: var(--primary); color: #fff; }
-
-    .qty-val {
-      min-width: 26px;
-      text-align: center;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .sidebar {
-      position: sticky;
-      top: 20px;
-    }
-
+    /* sidebar */
+    .sidebar { position:sticky; top:20px; animation:sidebarSlide .6s .4s both; }
     .summary-card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      padding: 20px;
+      background:var(--surface); border-radius:var(--radius); border:1px solid var(--border);
+      padding:20px; transition:box-shadow .3s,border-color .3s;
     }
-
-    .summary-card h2 {
-      font-size: 1rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
+    .summary-card.has-items { box-shadow:0 4px 24px rgba(92,110,247,.12); border-color:rgba(92,110,247,.2); }
+    .summary-card h2 { font-size:1rem; font-weight:600; display:flex; align-items:center; gap:8px; margin-bottom:16px; }
     .badge {
-      background: var(--primary);
-      color: #fff;
-      border-radius: 20px;
-      padding: 1px 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
+      background:var(--primary); color:#fff; border-radius:20px;
+      padding:1px 9px; font-size:.75rem; font-weight:600; display:inline-block;
     }
+    .badge.bump { animation:badgeBounce .4s ease; }
+    .empty-state { text-align:center; padding:28px 12px; color:var(--text-muted); font-size:.88rem; animation:fadeSlideUp .4s ease; }
+    .empty-state i { font-size:2rem; display:block; margin-bottom:8px; opacity:.25; }
 
-    .empty-state {
-      text-align: center;
-      padding: 28px 12px;
-      color: var(--text-muted);
-      font-size: 0.88rem;
-    }
-
-    .empty-state i { font-size: 2rem; display: block; margin-bottom: 8px; opacity: 0.3; }
-
-    .order-list { list-style: none; margin-bottom: 14px; }
-
+    .order-list { list-style:none; margin-bottom:14px; }
     .order-list li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.85rem;
-      padding: 5px 0;
-      border-bottom: 1px solid var(--border);
-      gap: 8px;
+      display:flex; justify-content:space-between; align-items:center;
+      font-size:.85rem; padding:5px 0; border-bottom:1px solid var(--border); gap:8px;
+      animation:slideInRight .3s ease;
     }
+    .order-list li:last-child { border-bottom:none; }
+    .order-list .item-name { flex:1; }
+    .order-list .item-qty { color:var(--text-muted); white-space:nowrap; }
 
-    .order-list li:last-child { border-bottom: none; }
-
-    .order-list .item-name { flex: 1; }
-    .order-list .item-qty { color: var(--text-muted); white-space: nowrap; }
-
-    .order-total {
-      display: flex;
-      justify-content: space-between;
-      font-weight: 600;
-      font-size: 0.9rem;
-      padding: 10px 0 14px;
-      border-top: 1px solid var(--border);
-    }
+    .order-total { display:flex; justify-content:space-between; font-weight:600; font-size:.92rem; padding:10px 0 14px; border-top:1px solid var(--border); }
+    #orderTotal.pop { animation:totalPop .4s ease; }
 
     .special-notes {
-      width: 100%;
-      min-height: 70px;
-      padding: 10px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: var(--bg);
-      color: var(--text);
-      font-family: inherit;
-      font-size: 0.82rem;
-      resize: vertical;
-      margin-bottom: 12px;
-      outline: none;
-      transition: border-color var(--transition);
+      width:100%; min-height:70px; padding:10px;
+      border-radius:var(--radius-sm); border:1px solid var(--border);
+      background:var(--bg); color:var(--text); font-family:inherit; font-size:.82rem;
+      resize:vertical; margin-bottom:12px; outline:none; transition:border-color .2s,box-shadow .2s;
     }
-
-    .special-notes:focus { border-color: var(--primary); }
-    .special-notes::placeholder { color: var(--text-muted); }
-
-    .phone-row {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 12px;
-      align-items: center;
-    }
-
-    .phone-row i { color: var(--text-muted); font-size: 13px; flex-shrink: 0; }
-
+    .special-notes:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(92,110,247,.12); }
+    .special-notes::placeholder { color:var(--text-muted); }
+    .phone-row { display:flex; gap:6px; margin-bottom:12px; align-items:center; }
+    .phone-row i { color:var(--text-muted); font-size:13px; flex-shrink:0; }
     .phone-row input {
-      flex: 1;
-      padding: 8px 10px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: var(--bg);
-      color: var(--text);
-      font-size: 0.82rem;
-      outline: none;
-      transition: border-color var(--transition);
+      flex:1; padding:8px 10px; border-radius:var(--radius-sm); border:1px solid var(--border);
+      background:var(--bg); color:var(--text); font-size:.82rem; outline:none;
+      transition:border-color .2s,box-shadow .2s;
     }
+    .phone-row input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(92,110,247,.12); }
+    .phone-row input::placeholder { color:var(--text-muted); }
 
-    .phone-row input:focus { border-color: var(--primary); }
-    .phone-row input::placeholder { color: var(--text-muted); }
-
-    .action-btns { display: flex; flex-direction: column; gap: 8px; }
-
+    .action-btns { display:flex; flex-direction:column; gap:8px; }
     .btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      padding: 10px 16px;
-      border-radius: var(--radius-sm);
-      border: none;
-      font-size: 0.87rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      width: 100%;
+      display:flex; align-items:center; justify-content:center; gap:7px;
+      padding:10px 16px; border-radius:var(--radius-sm); border:none;
+      font-size:.87rem; font-weight:600; cursor:pointer; width:100%;
+      position:relative; overflow:hidden; transition:filter .15s,transform .15s;
     }
+    .btn::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,.18); opacity:0; transition:opacity .2s; }
+    .btn:hover::after { opacity:1; }
+    .btn:active { transform:scale(.97); filter:brightness(.92); }
+    .btn-primary { background:var(--primary); color:#fff; }
+    .btn-wa { background:#25D366; color:#fff; }
+    .btn-ghost { background:transparent; color:var(--text-muted); border:1px solid var(--border); }
+    .btn-ghost:hover { border-color:var(--danger); color:var(--danger); }
 
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-dark); }
-
-    .btn-wa { background: #25D366; color: #fff; }
-    .btn-wa:hover { background: #1ebe5a; }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
-
-    .btn-ghost:hover { border-color: var(--danger); color: var(--danger); }
-
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
+    /* toast */
     .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: #1e2535;
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      transition: transform 0.3s ease;
-      z-index: 100;
-      white-space: nowrap;
+      position:fixed; bottom:28px; left:50%;
+      transform:translateX(-50%) translateY(60px) scale(.8);
+      background:#1e2535; color:#fff; padding:10px 22px; border-radius:22px;
+      font-size:.85rem; font-weight:500; z-index:1000; white-space:nowrap;
+      pointer-events:none; opacity:0; display:flex; align-items:center; gap:8px;
     }
-
-    .toast.show { transform: translateX(-50%) translateY(0); }
-
-    @media (prefers-color-scheme: dark) {
-      .toast { background: #e8eaf2; color: #111318; }
-    }
+    .toast.show { animation:toastIn .35s cubic-bezier(.22,1,.36,1) forwards; opacity:1; }
+    .toast.hide { animation:toastOut .3s ease forwards; }
+    @media (prefers-color-scheme:dark) { .toast { background:#e8eaf2; color:#111318; } }
   </style>
 </head>
 <body>
+
+<div class="progress-bar" id="progressBar"></div>
+
 <div class="page">
   <header>
-    <h1><i class="fas fa-utensils" style="margin-right:8px;font-size:1.5rem;"></i>Food Order Selector</h1>
+    <h1><i class="fas fa-utensils" style="margin-right:8px;font-size:1.5rem;background:inherit;-webkit-text-fill-color:inherit;"></i>Food Order Selector</h1>
     <p>Pick your items, set quantities, and send your order</p>
   </header>
 
@@ -411,336 +298,236 @@
   <main>
     <div class="grid" id="grid">
 
-      <div class="item" data-name="Burger" data-price="8.90" data-cat="western" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/bf/40/8d/bf408de4cb3d0fb499b6b7de00202ff7.jpg" alt="Burger" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Burger</div>
-          <div class="item-price">RM 8.90</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Burger" data-price="8.90" data-cat="western" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/bf/40/8d/bf408de4cb3d0fb499b6b7de00202ff7.jpg" alt="Burger" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Burger</div><div class="item-price">RM 8.90</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Pizza" data-price="14.90" data-cat="western" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/e4/56/8d/e4568d1db8b1b8c383f7b02750a1a802.jpg" alt="Pizza" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Pizza</div>
-          <div class="item-price">RM 14.90</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Pizza" data-price="14.90" data-cat="western" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/e4/56/8d/e4568d1db8b1b8c383f7b02750a1a802.jpg" alt="Pizza" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Pizza</div><div class="item-price">RM 14.90</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Sushi" data-price="18.00" data-cat="western" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/20/e0/e2/20e0e2e52d81ef3af0fe2cfb9ffa1a8f.jpg" alt="Sushi" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Sushi</div>
-          <div class="item-price">RM 18.00</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Sushi" data-price="18.00" data-cat="western" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/20/e0/e2/20e0e2e52d81ef3af0fe2cfb9ffa1a8f.jpg" alt="Sushi" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Sushi</div><div class="item-price">RM 18.00</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Salad" data-price="9.50" data-cat="western" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/66/c0/16/66c01686169318ab58ddcae523976d4f.jpg" alt="Salad" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Salad</div>
-          <div class="item-price">RM 9.50</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Salad" data-price="9.50" data-cat="western" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/66/c0/16/66c01686169318ab58ddcae523976d4f.jpg" alt="Salad" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Salad</div><div class="item-price">RM 9.50</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Pasta" data-price="12.90" data-cat="western" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/9c/b7/4e/9cb74e3341286a334862dc22d69baf7d.jpg" alt="Pasta" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Pasta</div>
-          <div class="item-price">RM 12.90</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Pasta" data-price="12.90" data-cat="western" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/9c/b7/4e/9cb74e3341286a334862dc22d69baf7d.jpg" alt="Pasta" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Pasta</div><div class="item-price">RM 12.90</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Nasi Lemak" data-price="6.50" data-cat="local" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/3b/62/dc/3b62dcd2cfe13f82d0cfb3b3d8c5767e.jpg" alt="Nasi Lemak" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Nasi Lemak</div>
-          <div class="item-price">RM 6.50</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Nasi Lemak" data-price="6.50" data-cat="local" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/3b/62/dc/3b62dcd2cfe13f82d0cfb3b3d8c5767e.jpg" alt="Nasi Lemak" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Nasi Lemak</div><div class="item-price">RM 6.50</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Karipap" data-price="2.50" data-cat="local" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/5b/c9/fa/5bc9fa8f3bc13a679b1e2ee9aa948277.jpg" alt="Karipap" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Karipap</div>
-          <div class="item-price">RM 2.50</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Karipap" data-price="2.50" data-cat="local" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/5b/c9/fa/5bc9fa8f3bc13a679b1e2ee9aa948277.jpg" alt="Karipap" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Karipap</div><div class="item-price">RM 2.50</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Roti Jantan" data-price="5.00" data-cat="local" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/23/b1/80/23b1807abfdc446bf0254dcd29f311c9.jpg" alt="Roti Jantan" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Roti Jantan</div>
-          <div class="item-price">RM 5.00</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Roti Jantan" data-price="5.00" data-cat="local" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/23/b1/80/23b1807abfdc446bf0254dcd29f311c9.jpg" alt="Roti Jantan" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Roti Jantan</div><div class="item-price">RM 5.00</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Nasi Ayam Stim" data-price="8.00" data-cat="local" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/52/ed/14/52ed14e4bf7d36ddbb8695eac1c303e8.jpg" alt="Nasi Ayam Stim" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Nasi Ayam Stim</div>
-          <div class="item-price">RM 8.00</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Nasi Ayam Stim" data-price="8.00" data-cat="local" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/52/ed/14/52ed14e4bf7d36ddbb8695eac1c303e8.jpg" alt="Nasi Ayam Stim" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Nasi Ayam Stim</div><div class="item-price">RM 8.00</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Burger Sejuk" data-price="7.50" data-cat="local" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/33/8d/b0/338db03179ddce491c7441a3a6a834f9.jpg" alt="Burger Sejuk" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Burger Sejuk</div>
-          <div class="item-price">RM 7.50</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Burger Sejuk" data-price="7.50" data-cat="local" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/33/8d/b0/338db03179ddce491c7441a3a6a834f9.jpg" alt="Burger Sejuk" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Burger Sejuk</div><div class="item-price">RM 7.50</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Kueh Teow Mie Lebih" data-price="7.00" data-cat="local" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/0f/1f/dd/0f1fdd58c89efd55a7997113bcfbc1fd.jpg" alt="Kueh Teow Mie Lebih" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Kueh Teow Mie Lebih</div>
-          <div class="item-price">RM 7.00</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Kueh Teow Mie Lebih" data-price="7.00" data-cat="local" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/0f/1f/dd/0f1fdd58c89efd55a7997113bcfbc1fd.jpg" alt="Kueh Teow Mie Lebih" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Kueh Teow Mie Lebih</div><div class="item-price">RM 7.00</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Nasi Ayam Black Pepper" data-price="9.00" data-cat="local" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/3f/6d/4b/3f6d4bebd470a4ffbcc6dafe73262683.jpg" alt="Nasi Ayam Black Pepper" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Nasi Ayam Black Pepper</div>
-          <div class="item-price">RM 9.00</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Nasi Ayam Black Pepper" data-price="9.00" data-cat="local" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/3f/6d/4b/3f6d4bebd470a4ffbcc6dafe73262683.jpg" alt="Nasi Ayam Black Pepper" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Nasi Ayam Black Pepper</div><div class="item-price">RM 9.00</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Kurma Butter" data-price="10.00" data-cat="local" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/ab/80/38/ab8038797fe891d7674339f3da04f0d9.jpg" alt="Kurma Butter" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Kurma Butter</div>
-          <div class="item-price">RM 10.00</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Kurma Butter" data-price="10.00" data-cat="local" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/ab/80/38/ab8038797fe891d7674339f3da04f0d9.jpg" alt="Kurma Butter" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Kurma Butter</div><div class="item-price">RM 10.00</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Tempoyak Udang" data-price="11.00" data-cat="local" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/09/90/54/099054be2be66c1247f44bf3d5b5589d.jpg" alt="Tempoyak Udang" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Tempoyak Udang</div>
-          <div class="item-price">RM 11.00</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Tempoyak Udang" data-price="11.00" data-cat="local" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/09/90/54/099054be2be66c1247f44bf3d5b5589d.jpg" alt="Tempoyak Udang" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Tempoyak Udang</div><div class="item-price">RM 11.00</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Coffee" data-price="5.50" data-cat="dessert" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/6f/48/dc/6f48dc7fbc889a1664aaddb4dfa9c7ed.jpg" alt="Coffee" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Coffee</div>
-          <div class="item-price">RM 5.50</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Coffee" data-price="5.50" data-cat="dessert" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/6f/48/dc/6f48dc7fbc889a1664aaddb4dfa9c7ed.jpg" alt="Coffee" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Coffee</div><div class="item-price">RM 5.50</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Cake" data-price="7.00" data-cat="dessert" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/9c/aa/1b/9caa1b8a6b3e194753ba7c21bc0c0e43.jpg" alt="Cake" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Cake</div>
-          <div class="item-price">RM 7.00</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Cake" data-price="7.00" data-cat="dessert" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/9c/aa/1b/9caa1b8a6b3e194753ba7c21bc0c0e43.jpg" alt="Cake" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Cake</div><div class="item-price">RM 7.00</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Ice Cream" data-price="5.00" data-cat="dessert" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/22/7d/60/227d6014a6a51f446c4f5d35aa4f0b26.jpg" alt="Ice Cream" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Ice Cream</div>
-          <div class="item-price">RM 5.00</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Ice Cream" data-price="5.00" data-cat="dessert" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/22/7d/60/227d6014a6a51f446c4f5d35aa4f0b26.jpg" alt="Ice Cream" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Ice Cream</div><div class="item-price">RM 5.00</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Macha Fomo" data-price="8.50" data-cat="dessert" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/01/a2/28/01a22804fab6d30c497ee7bc20a9b364.jpg" alt="Macha Fomo" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Macha Fomo</div>
-          <div class="item-price">RM 8.50</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Macha Fomo" data-price="8.50" data-cat="dessert" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/01/a2/28/01a22804fab6d30c497ee7bc20a9b364.jpg" alt="Macha Fomo" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Macha Fomo</div><div class="item-price">RM 8.50</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
-      <div class="item" data-name="Longan Susu" data-price="7.00" data-cat="dessert" onclick="toggleItem(event, this)">
-        <div class="check-badge"><i class="fas fa-check"></i></div>
-        <img src="https://i.pinimg.com/736x/32/07/86/32078634c0b4fcf6f50b945720056dd4.jpg" alt="Longan Susu" loading="lazy">
-        <div class="item-body">
-          <div class="item-title">Longan Susu</div>
-          <div class="item-price">RM 7.00</div>
-        </div>
-        <div class="qty-controls">
-          <button class="qty-btn" onclick="adjustQty(event, this, -1)">−</button>
-          <span class="qty-val">1</span>
-          <button class="qty-btn" onclick="adjustQty(event, this, 1)">+</button>
-        </div>
+      <div class="item" data-name="Longan Susu" data-price="7.00" data-cat="dessert" onclick="toggleItem(event,this)">
+        <div class="ripple-container"></div><div class="check-badge"><svg viewBox="0 0 12 10"><polyline points="1,5 4.5,9 11,1"/></svg></div>
+        <div class="img-wrap"><img src="https://i.pinimg.com/736x/32/07/86/32078634c0b4fcf6f50b945720056dd4.jpg" alt="Longan Susu" loading="lazy"><div class="select-overlay"></div></div>
+        <div class="item-body"><div class="item-title">Longan Susu</div><div class="item-price">RM 7.00</div></div>
+        <div class="qty-controls"><button class="qty-btn" onclick="adjustQty(event,this,-1)">−</button><span class="qty-val">1</span><button class="qty-btn" onclick="adjustQty(event,this,1)">+</button></div>
       </div>
 
     </div>
   </main>
 
   <aside class="sidebar">
-    <div class="summary-card">
-      <h2>
-        <i class="fas fa-receipt" style="color: var(--primary);"></i>
-        Your Order
-        <span class="badge" id="badgeCount">0</span>
-      </h2>
-
+    <div class="summary-card" id="summaryCard">
+      <h2><i class="fas fa-receipt" style="color:var(--primary);"></i> Your Order <span class="badge" id="badgeCount">0</span></h2>
       <div id="emptyState" class="empty-state">
         <i class="fas fa-shopping-basket"></i>
         <p>Your basket is empty.<br>Select items above.</p>
       </div>
-
       <div id="orderContent" style="display:none;">
         <ul class="order-list" id="orderList"></ul>
-        <div class="order-total">
-          <span>Total</span>
-          <span id="orderTotal">RM 0.00</span>
-        </div>
-
-        <label style="font-size:0.78rem;color:var(--text-muted);display:block;margin-bottom:4px;">Special notes (optional)</label>
+        <div class="order-total"><span>Total</span><span id="orderTotal">RM 0.00</span></div>
+        <label style="font-size:.78rem;color:var(--text-muted);display:block;margin-bottom:4px;">Special notes (optional)</label>
         <textarea class="special-notes" id="notesInput" placeholder="E.g. no onions, extra spicy…"></textarea>
-
         <div class="phone-row">
           <i class="fab fa-whatsapp"></i>
           <input type="tel" id="phoneInput" placeholder="WhatsApp number (e.g. 601112345678)" />
         </div>
-
         <div class="action-btns">
-          <button class="btn btn-primary" onclick="copyOrder()">
-            <i class="far fa-copy"></i> Copy Order
-          </button>
-          <button class="btn btn-wa" onclick="sendWhatsApp()">
-            <i class="fab fa-whatsapp"></i> Send via WhatsApp
-          </button>
-          <button class="btn btn-ghost" onclick="clearOrder()">
-            <i class="fas fa-trash-alt"></i> Clear Order
-          </button>
+          <button class="btn btn-primary" onclick="copyOrder()"><i class="far fa-copy"></i> Copy Order</button>
+          <button class="btn btn-wa" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Send via WhatsApp</button>
+          <button class="btn btn-ghost" onclick="clearOrder()"><i class="fas fa-trash-alt"></i> Clear Order</button>
         </div>
       </div>
     </div>
   </aside>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle" style="font-size:14px;"></i>
+  <span id="toastMsg"></span>
+</div>
 
 <script>
-  const orders = new Map(); // name -> { qty, price }
+  const orders = new Map();
+  const MAX_ITEMS = 20;
+  const PARTICLE_COLORS = ['#5c6ef7','#a78bfa','#2eb872','#f59e0b','#ef4444','#ec4899'];
+
+  /* staggered entrance */
+  document.querySelectorAll('.item').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity .4s ease, transform .4s ease, border-color .25s, box-shadow .25s';
+    setTimeout(() => { el.style.opacity='1'; el.style.transform='translateY(0)'; }, 60 + i*35);
+  });
+
+  /* shimmer removal on image load */
+  document.querySelectorAll('.item img').forEach(img => {
+    const w = img.closest('.img-wrap');
+    if (img.complete) w.classList.add('loaded');
+    else img.onload = () => w.classList.add('loaded');
+  });
+
+  function spawnRipple(el, e) {
+    const rc = el.querySelector('.ripple-container');
+    if (!rc) return;
+    const rect = el.getBoundingClientRect();
+    const r = document.createElement('div');
+    r.className = 'ripple-circle';
+    r.style.left = (e.clientX - rect.left) + 'px';
+    r.style.top  = (e.clientY - rect.top)  + 'px';
+    rc.appendChild(r);
+    r.addEventListener('animationend', () => r.remove());
+  }
+
+  function spawnParticles(el) {
+    const rect = el.getBoundingClientRect();
+    for (let i = 0; i < 8; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.background = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
+      p.style.left  = (rect.left + rect.width  * Math.random()) + 'px';
+      p.style.top   = (rect.top  + rect.height * Math.random()) + 'px';
+      p.style.animationDelay    = (Math.random() * 0.18) + 's';
+      p.style.animationDuration = (0.5 + Math.random() * 0.4) + 's';
+      document.body.appendChild(p);
+      p.addEventListener('animationend', () => p.remove());
+    }
+  }
 
   function toggleItem(e, el) {
     if (e.target.closest('.qty-controls')) return;
-    const name = el.dataset.name;
+    spawnRipple(el, e);
+    const name  = el.dataset.name;
     const price = parseFloat(el.dataset.price);
-
     if (orders.has(name)) {
       orders.delete(name);
       el.classList.remove('selected');
+      el.classList.add('deselecting');
       el.querySelector('.qty-val').textContent = '1';
+      el.addEventListener('animationend', () => el.classList.remove('deselecting'), { once: true });
     } else {
       orders.set(name, { qty: 1, price });
-      el.classList.add('selected');
+      el.classList.add('selected', 'selecting');
+      spawnParticles(el);
+      el.addEventListener('animationend', () => el.classList.remove('selecting'), { once: true });
     }
     updateUI();
   }
@@ -752,99 +539,104 @@
     if (!orders.has(name)) return;
     const entry = orders.get(name);
     entry.qty = Math.max(1, entry.qty + delta);
-    el.querySelector('.qty-val').textContent = entry.qty;
+    const valEl = el.querySelector('.qty-val');
+    valEl.textContent = entry.qty;
+    valEl.classList.remove('bump');
+    void valEl.offsetWidth;
+    valEl.classList.add('bump');
     updateUI();
   }
 
   function updateUI() {
-    const totalQty = Array.from(orders.values()).reduce((s, v) => s + v.qty, 0);
-    const totalPrice = Array.from(orders.values()).reduce((s, v) => s + v.qty * v.price, 0);
+    const totalQty   = Array.from(orders.values()).reduce((s,v) => s+v.qty, 0);
+    const totalPrice = Array.from(orders.values()).reduce((s,v) => s+v.qty*v.price, 0);
 
-    document.getElementById('badgeCount').textContent = totalQty;
+    document.getElementById('progressBar').style.width =
+      totalQty === 0 ? '0%' : Math.min(100, (totalQty/MAX_ITEMS)*100) + '%';
+
+    const badge = document.getElementById('badgeCount');
+    badge.textContent = totalQty;
+    if (totalQty > 0) { badge.classList.remove('bump'); void badge.offsetWidth; badge.classList.add('bump'); }
+
+    document.getElementById('summaryCard').classList.toggle('has-items', totalQty > 0);
 
     if (totalQty === 0) {
       document.getElementById('emptyState').style.display = '';
       document.getElementById('orderContent').style.display = 'none';
       return;
     }
-
     document.getElementById('emptyState').style.display = 'none';
     document.getElementById('orderContent').style.display = '';
 
-    const list = document.getElementById('orderList');
-    list.innerHTML = Array.from(orders.entries()).map(([name, { qty, price }]) => `
-      <li>
-        <span class="item-name">${name}</span>
-        <span class="item-qty">x${qty}</span>
-        <span style="color:var(--text-muted);font-size:0.8rem;">RM ${(qty * price).toFixed(2)}</span>
-      </li>
-    `).join('');
+    document.getElementById('orderList').innerHTML =
+      Array.from(orders.entries()).map(([name,{qty,price}]) => `
+        <li>
+          <span class="item-name">${name}</span>
+          <span class="item-qty">x${qty}</span>
+          <span style="color:var(--text-muted);font-size:.8rem;">RM ${(qty*price).toFixed(2)}</span>
+        </li>`).join('');
 
-    document.getElementById('orderTotal').textContent = `RM ${totalPrice.toFixed(2)}`;
+    const tot = document.getElementById('orderTotal');
+    tot.textContent = `RM ${totalPrice.toFixed(2)}`;
+    tot.classList.remove('pop'); void tot.offsetWidth; tot.classList.add('pop');
   }
 
   function buildMessage() {
-    const lines = Array.from(orders.entries())
-      .map(([name, { qty, price }]) => `  • ${name} x${qty} — RM ${(qty * price).toFixed(2)}`);
-    const total = Array.from(orders.values()).reduce((s, v) => s + v.qty * v.price, 0);
+    const lines = Array.from(orders.entries()).map(([n,{qty,price}]) => `  • ${n} x${qty} — RM ${(qty*price).toFixed(2)}`);
+    const total = Array.from(orders.values()).reduce((s,v) => s+v.qty*v.price, 0);
     const notes = document.getElementById('notesInput').value.trim();
-    const date = new Date().toLocaleString('en-MY', { dateStyle: 'medium', timeStyle: 'short' });
-
-    let msg = `🍽️ *Food Order*\n📅 ${date}\n\n`;
-    msg += lines.join('\n');
-    msg += `\n\n💰 *Total: RM ${total.toFixed(2)}*`;
+    const date  = new Date().toLocaleString('en-MY',{dateStyle:'medium',timeStyle:'short'});
+    let msg = `🍽️ *Food Order*\n📅 ${date}\n\n` + lines.join('\n') + `\n\n💰 *Total: RM ${total.toFixed(2)}*`;
     if (notes) msg += `\n\n📝 Notes: ${notes}`;
-    msg += '\n\nThank you! 🙏';
-    return msg;
+    return msg + '\n\nThank you! 🙏';
   }
 
   function copyOrder() {
-    const msg = buildMessage();
-    navigator.clipboard.writeText(msg).then(() => showToast('Order copied to clipboard'));
+    navigator.clipboard.writeText(buildMessage()).then(() => showToast('Order copied to clipboard!'));
   }
 
   function sendWhatsApp() {
-    const msg = buildMessage();
-    let phone = document.getElementById('phoneInput').value.trim().replace(/\D/g, '');
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-    window.open(url, '_blank');
+    const phone = document.getElementById('phoneInput').value.trim().replace(/\D/g,'');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(buildMessage())}`, '_blank');
   }
 
   function clearOrder() {
     orders.clear();
     document.querySelectorAll('.item.selected').forEach(el => {
-      el.classList.remove('selected');
+      el.classList.remove('selected'); el.classList.add('deselecting');
       el.querySelector('.qty-val').textContent = '1';
+      el.addEventListener('animationend', () => el.classList.remove('deselecting'), { once: true });
     });
     document.getElementById('notesInput').value = '';
     updateUI();
     showToast('Order cleared');
   }
 
+  let toastTimer;
   function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
+    document.getElementById('toastMsg').textContent = msg;
+    clearTimeout(toastTimer);
+    t.classList.remove('hide'); t.classList.add('show');
+    toastTimer = setTimeout(() => {
+      t.classList.remove('show'); t.classList.add('hide');
+      t.addEventListener('animationend', () => t.classList.remove('hide'), { once: true });
+    }, 2400);
   }
 
   let activeCat = 'all';
-
   function filterCat(btn) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     activeCat = btn.dataset.cat;
     applyFilters();
   }
-
   function filterSearch() { applyFilters(); }
-
   function applyFilters() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
+    const q = document.getElementById('searchInput').value.toLowerCase();
     document.querySelectorAll('.item').forEach(el => {
-      const catMatch = activeCat === 'all' || el.dataset.cat === activeCat;
-      const nameMatch = el.dataset.name.toLowerCase().includes(query);
-      el.classList.toggle('hidden', !(catMatch && nameMatch));
+      const ok = (activeCat==='all'||el.dataset.cat===activeCat) && el.dataset.name.toLowerCase().includes(q);
+      el.classList.toggle('hidden', !ok);
     });
   }
 
